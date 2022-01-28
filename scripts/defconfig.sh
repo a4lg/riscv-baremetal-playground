@@ -1,0 +1,19 @@
+#! /bin/sh
+CC_ISA="$1"
+CC_ABI="$2"
+if test -f .config
+then
+    mv -f .config .config.old
+fi
+cat >.config <<_END
+#CONFIG_TARGET_ISA = rv64gc
+#CONFIG_TARGET_ABI = lp64d
+#CONFIG_TARGET_ISA = rv32imafc
+#CONFIG_TARGET_ABI = ilp32f
+CONFIG_TARGET_ISA = $CC_ISA
+CONFIG_TARGET_ABI = $CC_ABI
+CONFIG_ADDR_START = 0x80000000
+CONFIG_ADDR_DATA  = auto
+CONFIG_ADDR_STACK = auto
+CONFIG_STACK_SIZE = 8192
+_END
