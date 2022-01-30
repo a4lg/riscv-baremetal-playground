@@ -122,6 +122,8 @@ endif
 LDFLAGS_BARE   = $(LDFLAGS) -nostdlib -nostartfiles
 LDFLAGS_NEWLIB = $(LDFLAGS)
 
+OBJDUMP_FLAGS =
+
 ARCH_CFLAGS = -march=$(CONFIG_TARGET_ISA) -mabi=$(CONFIG_TARGET_ABI) -mcmodel=medany
 ALL_CFLAGS   = $(ARCH_CFLAGS) $(CFLAGS)
 ALL_CXXFLAGS = $(ARCH_CFLAGS) $(CFLAGS) $(CXXFLAGS)
@@ -190,7 +192,7 @@ $(outdir)/%.newlib.elf: $(objdir)/%.newlib.o $(objdir)/liball.a $(objdir)/libcrt
 	$(call compile_ld_newlib,$@,$< $(objdir)/liball.a)
 $(outdir)/%.txt: $(outdir)/%.elf
 	$(CMD_PREFIX) echo " OBJDUMP     $(subst $(outdir)/,,$@)"; \
-	$(CROSS_OBJDUMP) -x -s -d -r $< >$@
+	$(CROSS_OBJDUMP) -x -s -d -r $(OBJDUMP_FLAGS) $< >$@
 
 ifeq ($(GOALS_NODEP_FILTERED),)
 -include $(dep_pathes)
