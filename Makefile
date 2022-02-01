@@ -31,9 +31,13 @@ GOALS_NODEP := $(GOALS_CLEAN) defconfig
 GOALS_CLEAN_FILTERED := $(filter $(GOALS_CLEAN),$(MAKECMDGOALS))
 GOALS_NODEP_FILTERED := $(filter $(GOALS_NODEP),$(MAKECMDGOALS))
 
+ifeq ($(GOALS_NODEP_FILTERED),)
+-include CUSTOM_ENV.mk
+endif
 
 
-MAKECONFIG_DEPS = .config Makefile SOURCES.mk CUSTOM.mk CUSTOM_DEPS.mk
+MAKECONFIG_DEPS = .config Makefile SOURCES.mk \
+	CUSTOM_ENV.mk CUSTOM.mk CUSTOM_DEPS.mk
 
 src_targets :=
 src_liball  := \
@@ -76,6 +80,9 @@ all: $(obj_path_targets) $(obj_dumps)
 
 SOURCES.mk: data/templates/SOURCES.mk
 	$(CMD_PREFIX)echo " TEMPLATE  SOURCES.mk"
+	$(CMD_PREFIX)if test -f $@; then touch $@; else cp $< $@; fi
+CUSTOM_ENV.mk: data/templates/CUSTOM_ENV.mk
+	$(CMD_PREFIX)echo " TEMPLATE  CUSTOM_ENV.mk"
 	$(CMD_PREFIX)if test -f $@; then touch $@; else cp $< $@; fi
 CUSTOM.mk: data/templates/CUSTOM.mk
 	$(CMD_PREFIX)echo " TEMPLATE  CUSTOM.mk"
@@ -212,6 +219,8 @@ clean:
 mrproper:
 	$(CMD_PREFIX)echo " RM        SOURCES.mk"
 	$(CMD_PREFIX)rm -f SOURCES.mk
+	$(CMD_PREFIX)echo " RM        CUSTOM_ENV.mk"
+	$(CMD_PREFIX)rm -f CUSTOM_ENV.mk
 	$(CMD_PREFIX)echo " RM        CUSTOM.mk"
 	$(CMD_PREFIX)rm -f CUSTOM.mk
 	$(CMD_PREFIX)echo " RM        CUSTOM_DEPS.mk"
